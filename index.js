@@ -1,17 +1,7 @@
 require("dotenv").config(); //initializes dotenv
 const QRCode = require("qrcode");
-const { Client, GatewayIntentBits, AttachmentBuilder } = require("discord.js"); //imports discord.js
-const Discord = require("discord.js");
-
-const client = new Client({
-  intents: [
-    GatewayIntentBits.Guilds,
-    GatewayIntentBits.GuildMessages,
-    GatewayIntentBits.MessageContent,
-    GatewayIntentBits.GuildMembers,
-  ],
-}); //creates new client
-
+const { Client, MessageAttachment, MessageEmbed } = require("discord.js");
+const client = new Client({ intents: ["GUILDS", "GUILD_MESSAGES"] });
 const opts = {
   errorCorrectionLevel: "H",
   type: "terminal",
@@ -27,6 +17,8 @@ client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
+// use this for command based response
+/*
 client.on("messageCreate", async (msg) => {
   let rmsg = msg.content.split("-")[0];
   switch (rmsg) {
@@ -36,16 +28,27 @@ client.on("messageCreate", async (msg) => {
     case "QRCode":
       let arrMsg = msg.content.split("-").slice(1);
       await QRCode.toFile("qrCode.png", arrMsg, opts);
-
-      // const qrCodeBuffer = await QRCode.toBuffer(arrMsg);
-      const attachment = new AttachmentBuilder({
-        attachment:
-          "D:\project\src\github.com\SriHemnath\DiscordQRGenerator\qrCode.png",
-        name: "qrcode.png",
-      });
-      await msg.reply("Here is your QR code:", attachment);
+      const file = new MessageAttachment("qrCode.png");
+      const exampleEmbed = new MessageEmbed()
+        .setTitle("Some title")
+        .setImage("attachment://qrCode.png");
+      await msg.reply({ embeds: [exampleEmbed], files: [file] });
       break;
   }
+});
+*/
+
+//will convert whatever send to QR-Code
+client.on("messageCreate", async (msg) => {
+  if (msg.author.bot) {
+    return;
+  }
+  await QRCode.toFile("qrCode.png", msg.content, opts);
+  const file = new MessageAttachment("qrCode.png");
+  const exampleEmbed = new MessageEmbed()
+    .setTitle("Please scan below code")
+    .setImage("attachment://qrCode.png");
+  await msg.reply({ embeds: [exampleEmbed], files: [file] });
 });
 
 //this line must be at the very end
