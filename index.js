@@ -52,4 +52,6 @@ client.on("messageCreate", async (msg) => {
 });
 
 //this line must be at the very end
-client.login(process.env.CLIENT_TOKEN); //signs the bot in with token
+client.login(
+  "MTIxNDQzMjUzNDY5MjM2ODM5NQ.GZLdnB.zHKvZLF_08BsjB-MZ7BmNxq7WbGsxU5EUopFk4"
+); //signs the bot in with token
